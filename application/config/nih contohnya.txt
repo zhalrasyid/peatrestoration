@@ -1,0 +1,116 @@
+[7:21 AM, 7/21/2017] Safran Yusri: ini yg di model                        
+
+public function get_wdpa($wdpapoly_id)
+		{
+			$this->db->select('wdpapoly_id, st_asgeojson(st_transform(the_geom,4326)) as the_geom');
+			$this->db->from('wdpa_poly');
+			$this->db->where('wdpapoly_id', $wdpapoly_id);
+			$query = $this->db->get();
+			return $query->row_array();					
+		}
+		
+
+		[7:25 AM, 7/21/2017] Safran Yusri: 
+		
+		<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+?>
+<?php echo $wdpaid['wdpapoly_id']; ?>.<?php echo $wdpaid['the_geom']; ?> 
+
+<div id='map'></div>
+
+
+<script>
+
+
+		
+		
+		var LeafIcon = L.Icon.extend({});
+		var desico = new LeafIcon({iconUrl: '<?php echo base_url('img/des.png') ?>'});
+		var memico = new LeafIcon({iconUrl: '<?php echo base_url('img/mem.png') ?>'});
+		var mamico = new LeafIcon({iconUrl: '<?php echo base_url('img/mammals.png') ?>'});
+		var deadico = new LeafIcon({iconUrl: '<?php echo base_url('img/dead.png') ?>'});
+		var tpnico = new LeafIcon({iconUrl: '<?php echo base_url('img/tpn.png') ?>'});
+		var hereico = new LeafIcon({iconUrl: '<?php echo base_url('img/hereico.png') ?>'});
+ 
+		var wdpaid = new L.LayerGroup();
+		wdpaid<?php echo $wdpaid['wdpapoly_id']; ?> = L.geoJSON(<?php echo $wdpaid['the_geom']; ?>).addTo(wdpaid);
+ 
+
+				
+ 
+
+
+
+
+
+	
+	var mbAttr = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+			'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+			'Imagery � <a href="http://mapbox.com">Mapbox</a>',
+		mbUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2FmcmFuIiwiYSI6ImNqMDZjeGFpNzBwYXYycW5odWNpOXp4cHAifQ.9axotskWgNPG-amxqYOodg';
+
+	var grayscale   = L.tileLayer(mbUrl, {id: 'mapbox.light', attribution: mbAttr}),
+		contrast   = L.tileLayer(mbUrl, {id: 'mapbox.dark', attribution: mbAttr}),
+		outdoor   = L.tileLayer(mbUrl, {id: 'mapbox.outdoors', attribution: mbAttr}),
+		satellite   = L.tileLayer(mbUrl, {id: 'mapbox.satellite', attribution: mbAttr}),
+		streets  = L.tileLayer(mbUrl, {id: 'mapbox.streets',   attribution: mbAttr});
+
+	var map = L.map('map', {
+		center: [-2.923360, 107.907745],
+		zoom: 5,
+		layers: [outdoor, wdpaid]
+	});
+	
+			map.locate({watch: true, setView: false});
+	
+
+	var baseLayers = {
+		"Grayscale": grayscale,
+		"Contrast": contrast,
+		"Outdoors": outdoor,
+		"Satellite": satellite,
+		"Streets": streets
+	};
+
+	var overlays = {
+		"Protected Areas": wdpaid,
+
+		
+	};
+
+	L.control.layers(baseLayers, overlays, {collapsed: false}).addTo(map);
+
+		function onMapDblClick(e) {
+			L.marker(e.latlng).addTo(map)
+			.bindPopup("You clicked the map at " + e.latlng.toString()).openPopup();
+
+	}
+
+
+	map.on('dblclick', onMapDblClick);
+
+
+		var osmGeocoder = new L.Control.OSMGeocoder({placeholder: 'Search location...', collapsed: false});
+
+		map.addControl(osmGeocoder);
+
+		
+			function onLocationFound(e) {
+		var radius = e.accuracy / 2;
+
+		L.marker(e.latlng, {icon: hereico}).addTo(map)
+			.bindPopup("You are within " + radius + " meters from this point").openPopup();
+
+		L.circle(e.latlng, radius).addTo(map);
+	}
+
+	function onLocationError(e) {
+		alert(e.message);
+	}
+	
+		map.on('locationfound', onLocationFound);
+	map.on('locationerror', onLocationError);
+
+</script>                        
+[7:25 AM, 7/21/2017] Safran Yusri: 👆ini yg view

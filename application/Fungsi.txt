@@ -1,0 +1,13 @@
+ Fungsi
+========
+1. Distance
+2. Buffer
+3. Intersect
+4. WithinArea
+5. touch
+6. st_area
+7. query attr
+8. shp2pgsql
+9. difference
+10. merge
+11. dissolve
